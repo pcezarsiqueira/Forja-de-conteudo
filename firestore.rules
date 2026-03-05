@@ -1,0 +1,151 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: users
+// Document ID: {userId} (Auth UID)
+// Fields:
+//   - uid: string (required)
+//   - email: string (required)
+//   - displayName: string (optional)
+//   - photoURL: string (optional)
+//   - credits: int (required, default 10)
+//   - role: string (required, 'client' or 'admin')
+//   - createdAt: timestamp (required)
+//
+// Collection: content
+// Document ID: {contentId} (Auto-generated)
+// Fields:
+//   - id: string (required)
+//   - userId: string (required, owner)
+//   - title: string (required, max 100 chars)
+//   - content: string (required, max 5000 chars)
+//   - type: string (required, 'idea'|'story')
+//   - status: string (required)
+//   - metadata: map (optional)
+//   - analysis: map (optional)
+//   - scripts: map (optional)
+//   - isFavorite: bool (optional)
+//   - createdAt: timestamp (required)
+//   - updatedAt: timestamp (required)
+//
+// Collection: rituals
+// Document ID: {ritualId} (Auto-generated)
+// Fields:
+//   - id: string (required)
+//   - userId: string (required, owner)
+//   - contentId: string (required)
+//   - views: int (optional)
+//   - engagement: number (optional)
+//   - comments: string (optional, max 1000 chars)
+//   - notes: string (optional, max 1000 chars)
+//   - createdAt: timestamp (required)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "pcezar.siqueira@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'email', 'credits', 'role', 'createdAt']) &&
+             hasOnlyAllowedFields(['uid', 'email', 'displayName', 'photoURL', 'credits', 'role', 'createdAt']) &&
+             data.uid == request.auth.uid &&
+             data.email == request.auth.token.email &&
+             data.credits is int && data.credits >= 0 &&
+             data.role in ['client', 'admin'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidContent(data) {
+      return hasRequiredFields(['userId', 'title', 'content', 'type', 'status', 'createdAt', 'updatedAt']) &&
+             data.userId == request.auth.uid &&
+             data.title is string && data.title.size() <= 100 &&
+             data.content is string && data.content.size() <= 5000 &&
+             data.type in ['idea', 'story'] &&
+             data.status in ['captured', 'classified', 'refined', 'produced'] &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidRitual(data) {
+      return hasRequiredFields(['userId', 'contentId', 'createdAt']) &&
+             data.userId == request.auth.uid &&
+             (!('views' in data) || data.views is int) &&
+             (!('engagement' in data) || data.engagement is number) &&
+             (!('comments' in data) || (data.comments is string && data.comments.size() <= 1000)) &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000)) &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && 
+                      (request.resource.data.role == 'client' || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && 
+                      (request.resource.data.role == resource.data.role || isAdmin());
+    }
+
+    match /content/{contentId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && isValidContent(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidContent(request.resource.data);
+      allow delete: if isAuthenticated() && isDocOwner();
+    }
+
+    match /rituals/{ritualId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && isValidRitual(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidRitual(request.resource.data);
+      allow delete: if isAuthenticated() && isDocOwner();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

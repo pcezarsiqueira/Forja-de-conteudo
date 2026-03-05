@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user information and credits.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "credits": { "type": "integer", "description": "Available AI credits" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "credits"]
+    },
+    "Content": {
+      "title": "Captured Content",
+      "description": "Ideas or stories captured by the user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["idea", "story"] },
+        "status": { "type": "string", "enum": ["captured", "classified", "refined", "produced"] },
+        "metadata": { "type": "object" },
+        "analysis": { "type": "object" },
+        "scripts": { "type": "object" },
+        "isFavorite": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "content", "type", "status", "createdAt"]
+    },
+    "Ritual": {
+      "title": "Content Ritual",
+      "description": "Tracking results of produced content.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "contentId": { "type": "string" },
+        "views": { "type": "integer" },
+        "engagement": { "type": "number" },
+        "comments": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "contentId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/content/{contentId}": {
+      "schema": "Content",
+      "description": "User captured content"
+    },
+    "/rituals/{ritualId}": {
+      "schema": "Ritual",
+      "description": "Content performance tracking"
+    }
+  }
+}

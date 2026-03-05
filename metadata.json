@@ -1,0 +1,7 @@
+{
+  "name": "Remix: Forja de Conteúdo",
+  "description": "Um organizador inteligente para criadores de conteúdo, permitindo capturar ideias por áudio ou texto e transformá-las em rascunhos estruturados com IA.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
