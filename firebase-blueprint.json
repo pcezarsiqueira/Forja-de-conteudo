@@ -19,15 +19,13 @@
       "description": "Ideas or stories captured by the user.",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
         "userId": { "type": "string" },
         "title": { "type": "string" },
         "content": { "type": "string" },
         "type": { "type": "string", "enum": ["idea", "story"] },
         "status": { "type": "string", "enum": ["captured", "classified", "refined", "produced"] },
         "metadata": { "type": "object" },
-        "analysis": { "type": "object" },
-        "scripts": { "type": "object" },
+        "refinementAnalysis": { "type": "object" },
         "isFavorite": { "type": "boolean" },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }

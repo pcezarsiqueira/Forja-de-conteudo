@@ -21,6 +21,8 @@ function NewIdeaContent() {
   const isRecordingRef = useRef(false);
   const preRecordingContentRef = useRef('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [audioLevel, setAudioLevel] = useState<number[]>(new Array(11).fill(2));
@@ -59,9 +61,6 @@ function NewIdeaContent() {
 
         recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error', event.error);
-          if (event.error === 'not-allowed') {
-            alert('Permissão de microfone negada. Por favor, habilite o acesso.');
-          }
           setIsRecording(false);
         };
 
@@ -179,11 +178,13 @@ function NewIdeaContent() {
     if (!content) return;
     
     if (!user) {
-      const confirmLogin = confirm('Você precisa estar logado para salvar na nuvem. Deseja entrar agora?');
-      if (confirmLogin) {
-        await login();
-        return;
-      }
+      // Instead of confirm, we just trigger login or show a message.
+      // For now, let's just trigger login if they are not logged in, 
+      // or we could just save to local storage.
+      // The user said "não avançou para o processo de nova captura ou opção para Classificar"
+      // so let's make it smoother.
+      await login();
+      return;
     }
 
     setIsProcessing(true);
@@ -230,7 +231,8 @@ function NewIdeaContent() {
         }
       }).catch(err => console.error("Auto-classification failed:", err));
       
-      router.push('/');
+      setSavedId(contentId);
+      setIsSaved(true);
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'content');
     } finally {
@@ -238,7 +240,60 @@ function NewIdeaContent() {
     }
   };
 
+  const handleReset = () => {
+    setContent('');
+    setTimer(0);
+    setIsSaved(false);
+    setSavedId(null);
+    preRecordingContentRef.current = '';
+  };
+
   const time = formatTime(timer);
+
+  if (isSaved) {
+    return (
+      <div className="flex flex-col flex-1 bg-[#101e22] items-center justify-center p-6 text-center space-y-8 animate-in fade-in zoom-in duration-500">
+        <div className="relative">
+          <div className="size-24 bg-[#0db9f2]/20 rounded-full flex items-center justify-center text-[#0db9f2] animate-bounce">
+            <Sparkles size={48} />
+          </div>
+          <div className="absolute -top-2 -right-2 size-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-[#101e22]">
+            <Save size={14} className="text-white" />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-3xl font-bold text-white">Ideia Forjada!</h2>
+          <p className="text-slate-400">Sua semente criativa foi guardada com segurança na forja.</p>
+        </div>
+
+        <div className="w-full space-y-3 pt-4">
+          <button 
+            onClick={() => router.push(`/classify?id=${savedId}`)}
+            className="w-full py-4 bg-[#0db9f2] text-[#101e22] font-bold rounded-xl shadow-lg shadow-[#0db9f2]/20 flex items-center justify-center gap-2 active:scale-95 transition-all"
+          >
+            <Sparkles size={20} />
+            Classificar Agora
+          </button>
+          
+          <button 
+            onClick={handleReset}
+            className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl border border-slate-700 flex items-center justify-center gap-2 active:scale-95 transition-all"
+          >
+            <Mic size={20} />
+            Capturar Outra
+          </button>
+
+          <button 
+            onClick={() => router.push('/vault')}
+            className="w-full py-4 text-slate-400 font-medium hover:text-[#0db9f2] transition-colors"
+          >
+            Ir para Minha Forja
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col flex-1 bg-[#101e22]">

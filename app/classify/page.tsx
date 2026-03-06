@@ -3,8 +3,8 @@
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { LayoutGrid, TrendingUp, Sparkles, Star, ChevronRight, Merge, Target, Users, BarChart3, Tag, PlayCircle, CheckSquare, Square, AlertCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { classifyContent, criticalAnalysis, bulkClassify } from '@/lib/gemini';
 import { cn } from '@/lib/utils';
@@ -12,8 +12,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 
-export default function ClassifyPage() {
+function ClassifyContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const autoSelectId = searchParams.get('id');
   const { user } = useAuth();
   const [items, setItems] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -28,6 +30,20 @@ export default function ClassifyPage() {
   // New states for multi-select and classification metadata
   const [selectedForRefine, setSelectedForRefine] = useState<string[]>([]);
   const [itemMetadata, setItemMetadata] = useState<Record<string, any>>({});
+
+  const handleSelectItem = useCallback((item: any) => {
+    setSelectedItem(item);
+    setAnalysis(null);
+    setCriticalResult(null);
+    
+    // Initialize metadata for this item if not exists
+    if (!itemMetadata[item.id]) {
+      setItemMetadata(prev => ({
+        ...prev,
+        [item.id]: { format: 'Reels', tone: 'Sério', goal: 'Venda' }
+      }));
+    }
+  }, [itemMetadata]);
 
   useEffect(() => {
     if (user) {
@@ -47,6 +63,14 @@ export default function ClassifyPage() {
           }
         });
         setItemMetadata(metadata);
+
+        // Auto-select item if ID is provided in URL
+        if (autoSelectId) {
+          const itemToSelect = cloudItems.find(i => i.id === autoSelectId);
+          if (itemToSelect) {
+            handleSelectItem(itemToSelect);
+          }
+        }
       });
       return () => unsubscribe();
     } else {
@@ -58,23 +82,17 @@ export default function ClassifyPage() {
         { id: 'mock-1', title: 'IA no Marketing', content: 'Como usar IA para criar roteiros virais em segundos.', type: 'idea' },
         { id: 'mock-2', title: 'Minha primeira venda', content: 'A história de como fechei meu primeiro contrato de 10k.', type: 'story' },
       ];
-      setItems([...captured, ...mockData]);
-    }
-  }, [user]);
+      const allItems = [...captured, ...mockData];
+      setItems(allItems);
 
-  const handleSelectItem = (item: any) => {
-    setSelectedItem(item);
-    setAnalysis(null);
-    setCriticalResult(null);
-    
-    // Initialize metadata for this item if not exists
-    if (!itemMetadata[item.id]) {
-      setItemMetadata(prev => ({
-        ...prev,
-        [item.id]: { format: 'Reels', tone: 'Sério', goal: 'Venda' }
-      }));
+      if (autoSelectId) {
+        const itemToSelect = allItems.find(i => i.id === autoSelectId);
+        if (itemToSelect) {
+          handleSelectItem(itemToSelect);
+        }
+      }
     }
-  };
+  }, [user, autoSelectId, handleSelectItem]); // Added handleSelectItem to dependencies
 
   const updateMetadata = async (id: string, field: string, value: string) => {
     const currentMetadata = itemMetadata[id] || { format: 'Reels', tone: 'Sério', goal: 'Venda' };
@@ -515,5 +533,13 @@ export default function ClassifyPage() {
 
       <Navbar />
     </div>
+  );
+}
+
+export default function ClassifyPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-slate-400">Carregando...</div>}>
+      <ClassifyContent />
+    </Suspense>
   );
 }

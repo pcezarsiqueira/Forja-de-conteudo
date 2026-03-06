@@ -18,15 +18,13 @@ rules_version = '2';
 // Collection: content
 // Document ID: {contentId} (Auto-generated)
 // Fields:
-//   - id: string (required)
 //   - userId: string (required, owner)
 //   - title: string (required, max 100 chars)
-//   - content: string (required, max 5000 chars)
+//   - content: string (required, max 10000 chars)
 //   - type: string (required, 'idea'|'story')
 //   - status: string (required)
 //   - metadata: map (optional)
-//   - analysis: map (optional)
-//   - scripts: map (optional)
+//   - refinementAnalysis: map (optional)
 //   - isFavorite: bool (optional)
 //   - createdAt: timestamp (required)
 //   - updatedAt: timestamp (required)
@@ -67,7 +65,7 @@ service cloud.firestore {
     function isAdmin() {
       return isAuthenticated() &&
         (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-          (request.auth.token.email == "pcezar.siqueira@gmail.com" && request.auth.token.email_verified == true));
+          (request.auth.token.email == "pccris@gmail.com" && request.auth.token.email_verified == true));
     }
 
     function hasRequiredFields(fields) {
@@ -100,9 +98,12 @@ service cloud.firestore {
       return hasRequiredFields(['userId', 'title', 'content', 'type', 'status', 'createdAt', 'updatedAt']) &&
              data.userId == request.auth.uid &&
              data.title is string && data.title.size() <= 100 &&
-             data.content is string && data.content.size() <= 5000 &&
+             data.content is string && data.content.size() <= 10000 &&
              data.type in ['idea', 'story'] &&
              data.status in ['captured', 'classified', 'refined', 'produced'] &&
+             (!('metadata' in data) || data.metadata is map) &&
+             (!('refinementAnalysis' in data) || data.refinementAnalysis is map) &&
+             (!('isFavorite' in data) || data.isFavorite is bool) &&
              data.createdAt is timestamp &&
              data.updatedAt is timestamp;
     }
