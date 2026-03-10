@@ -9,8 +9,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Forja de Conteúdo',
-  description: 'Organizador inteligente para criadores de conteúdo',
+  title: 'Mindrop',
+  description: 'Um organizador inteligente para a sua mente criativa. Capture pensamentos, ideias e histórias e transforme-os em conteúdo estruturado com o poder da IA.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

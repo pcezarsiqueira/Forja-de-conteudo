@@ -263,8 +263,8 @@ function NewIdeaContent() {
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-white">Ideia Forjada!</h2>
-          <p className="text-slate-400">Sua semente criativa foi guardada com segurança na forja.</p>
+          <h2 className="text-3xl font-bold text-white">Mindrop Capturado!</h2>
+          <p className="text-slate-400">Sua semente criativa foi guardada com segurança na sua mente.</p>
         </div>
 
         <div className="w-full space-y-3 pt-4">
@@ -288,7 +288,7 @@ function NewIdeaContent() {
             onClick={() => router.push('/vault')}
             className="w-full py-4 text-slate-400 font-medium hover:text-[#0db9f2] transition-colors"
           >
-            Ir para Minha Forja
+            Ir para Minha Mente
           </button>
         </div>
       </div>
@@ -407,7 +407,7 @@ function NewIdeaContent() {
           ) : (
             <>
               <Save size={20} />
-              <span>Salvar na Forja</span>
+              <span>Salvar no Mindrop</span>
             </>
           )}
         </button>

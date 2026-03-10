@@ -13,24 +13,24 @@ export default function CarouselCreatorPage() {
   const slides = [
     {
       id: 1,
-      title: '5 Tips for Better Design',
-      subtitle: 'Swipe to learn more',
-      bg: 'https://picsum.photos/seed/design1/800/1000',
-      label: 'Intro Hook'
+      title: 'Desbloqueie sua Mente',
+      subtitle: 'Arraste para ver como o Mindrop funciona',
+      bg: 'https://picsum.photos/seed/mind-unlock/800/1000',
+      label: 'Gancho Inicial'
     },
     {
       id: 2,
-      title: '1. Contrast is King',
-      subtitle: 'Ensure your text stands out',
-      bg: 'https://picsum.photos/seed/design2/800/1000',
-      label: 'Point 1'
+      title: '1. Capture o Fluxo',
+      subtitle: 'Não deixe nenhuma ideia escapar',
+      bg: 'https://picsum.photos/seed/thought-flow/800/1000',
+      label: 'Passo 1'
     },
     {
       id: 3,
-      title: '2. Typography Matters',
-      subtitle: 'Choose fonts that reflect your brand',
-      bg: 'https://picsum.photos/seed/design3/800/1000',
-      label: 'Point 2'
+      title: '2. Refine o Caos',
+      subtitle: 'Transforme pensamentos em conteúdo',
+      bg: 'https://picsum.photos/seed/creative-process/800/1000',
+      label: 'Passo 2'
     }
   ];
 

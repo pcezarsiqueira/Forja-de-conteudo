@@ -219,7 +219,7 @@ function ClassifyContent() {
                   className="text-[10px] font-bold text-[#0db9f2] bg-[#0db9f2]/10 px-3 py-1.5 rounded-lg border border-[#0db9f2]/20 hover:bg-[#0db9f2]/20 transition-all flex items-center gap-1.5"
                 >
                   <Sparkles size={12} />
-                  Classificar Toda a Forja
+                  Classificar Todo o Mindrop
                 </button>
               )}
             </div>
@@ -227,7 +227,7 @@ function ClassifyContent() {
             {isBulkProcessing && (
               <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-700 border-dashed flex items-center justify-center gap-3">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0db9f2]"></div>
-                <p className="text-xs text-slate-400 animate-pulse">IA analisando todo o seu baú estratégico...</p>
+                <p className="text-xs text-slate-400 animate-pulse">IA analisando toda a sua mente criativa...</p>
               </div>
             )}
 

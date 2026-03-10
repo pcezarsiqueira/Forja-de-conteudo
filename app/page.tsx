@@ -53,23 +53,23 @@ export default function Home() {
   const collections = [
     {
       id: 'ideias',
-      title: 'Forja de Ideias',
-      description: 'Capture sparks criativos instantâneos',
+      title: 'Mente Criativa',
+      description: 'Capture lampejos de genialidade e insights rápidos.',
       icon: Mic,
       items: counts.ideas,
       lastUpdated: 'Ativo',
-      image: 'https://picsum.photos/seed/capture-idea/800/400',
+      image: 'https://picsum.photos/seed/creativity-mind/800/400',
       buttonText: 'Capturar Ideia',
       href: '/new?type=idea'
     },
     {
       id: 'historias',
-      title: 'Forja de Histórias',
-      description: 'Registre narrativas e experiências',
+      title: 'Fluxo de Pensamento',
+      description: 'Transforme vivências em narrativas poderosas.',
       icon: FileText,
       items: counts.stories,
       lastUpdated: 'Ativo',
-      image: 'https://picsum.photos/seed/capture-story/800/400',
+      image: 'https://picsum.photos/seed/thought-stream/800/400',
       buttonText: 'Registrar História',
       href: '/new?type=story'
     }

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         items: [
           {
             id: 'credits-pack',
-            title: `${credits} Créditos - Forja de Conteúdo`,
+            title: `${credits} Créditos - Mindrop`,
             quantity: 1,
             unit_price: Number(amount),
             currency_id: 'BRL',

@@ -103,7 +103,7 @@ export async function bulkClassify(items: { id: any, title: string, content: str
   const itemsList = items.map(item => `ID: ${item.id} | Título: ${item.title} | Conteúdo: ${item.content}`).join('\n');
   
   const prompt = `
-    Analise a seguinte lista de ideias e histórias da "Forja de Conteúdo":
+    Analise a seguinte lista de ideias e histórias do "Mindrop":
     
     ${itemsList}
     

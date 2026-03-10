@@ -16,7 +16,7 @@ export function Header() {
           <Menu size={20} className="text-slate-400" />
         </div>
         <div className="flex flex-col items-center">
-          <h1 className="text-lg font-bold tracking-tight text-slate-100">Forja de Conteúdo</h1>
+          <h1 className="text-lg font-bold tracking-tight text-slate-100">Mindrop</h1>
           {isApiKeyMissing && (
             <div className="flex items-center gap-1 text-[8px] text-red-400 font-bold uppercase animate-pulse">
               <AlertCircle size={8} /> API KEY AUSENTE

@@ -83,7 +83,7 @@ export default function VaultPage() {
           <div className="flex size-10 items-center justify-center rounded-full hover:bg-slate-800 cursor-pointer">
             <Filter size={20} className="text-slate-400" />
           </div>
-          <h1 className="text-slate-100 text-lg font-bold tracking-tight text-center">Minha Forja</h1>
+          <h1 className="text-slate-100 text-lg font-bold tracking-tight text-center">Minha Mente</h1>
           <div className="w-10" />
         </div>
 
@@ -94,7 +94,7 @@ export default function VaultPage() {
             </div>
             <input 
               className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-500 px-3 text-base" 
-              placeholder="Pesquisar na forja..."
+              placeholder="Pesquisar na mente..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -140,7 +140,7 @@ export default function VaultPage() {
             </div>
             <div>
               <p className="text-slate-300 font-bold">Nenhum item encontrado</p>
-              <p className="text-slate-500 text-sm">Capture novas ideias para começar sua forja.</p>
+              <p className="text-slate-500 text-sm">Capture novas ideias para começar sua jornada.</p>
             </div>
           </div>
         ) : (

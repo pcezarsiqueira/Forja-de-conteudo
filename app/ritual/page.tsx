@@ -163,7 +163,7 @@ export default function RitualPage() {
             <div className="space-y-6">
               <div className="p-6 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl space-y-6 text-[#101e22]">
                 <div className="space-y-1">
-                  <h3 className="text-2xl font-bold italic">Forja de Conteúdo OS</h3>
+                  <h3 className="text-2xl font-bold italic">Mindrop OS</h3>
                   <p className="text-xs font-medium opacity-80">
                     &quot;Consistência não é sobre postar todo dia, é sobre nunca deixar sua mente parar de processar o mundo.&quot;
                   </p>
